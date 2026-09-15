@@ -1,12 +1,18 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -e
 
-echo "=== بناء لغة luu ==="
-cargo build --release
+echo "=== تثبيت لغة Luu المترجمة والتكامل مع النظام ==="
 
-mkdir -p ~/.local/bin
+echo "--> جاري بناء وتثبيت المترجم عالمياً..."
+cargo install --path .
 
-cp target/release/luu_compiler ~/.local/bin/luu
+if [ -d "src/vscode-luu" ]; then
+    echo "--> حزم وتثبيت امتداد VS Code..."
+    cd src/vscode-luu
+    npx @vscode/vsce package --no-dependencies --allow-missing-repository
+    code --install-extension luu-language-0.0.1.vsix --force
+    cd ../..
+fi
 
-echo "=== تم تثبيت لغة luu بنجاح! ==="
-echo "تأكد من إضافة ~/.local/bin إلى مسار النظام (PATH) لديك."
+echo "=== اكتمل التثبيت بنجاح! ==="
+echo "يمكنك الآن تشغيل أي ملف عبر الأمر: luu اسم_الملف.luu"

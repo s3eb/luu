@@ -13,8 +13,10 @@ fn main() -> LuaResult<()> {
     }
 
     let show_code = args.iter().any(|arg| arg == "-c" || arg == "--code");
-    
-    let out_path = args.iter().position(|arg| arg == "-o" || arg == "--out")
+
+    let out_path = args
+        .iter()
+        .position(|arg| arg == "-o" || arg == "--out")
         .and_then(|idx| args.get(idx + 1));
 
     let file_path = args.iter().find(|&arg| {
@@ -29,8 +31,7 @@ fn main() -> LuaResult<()> {
         }
     };
 
-    let source_code = fs::read_to_string(file_path)
-        .expect("فشل في قراءة الملف المستهدف");
+    let source_code = fs::read_to_string(file_path).expect("فشل في قراءة الملف المستهدف");
 
     let lua_code = tokenize_and_translate(&source_code);
 
@@ -68,7 +69,6 @@ fn tokenize_and_translate(code: &str) -> String {
             continue;
         } else if in_string {
             if ch == '\\' {
-                // التعامل مع الهروب (Escaping مثل \") داخل النصوص
                 result.push(ch);
                 if let Some(next_ch) = chars.next() {
                     result.push(next_ch);
@@ -99,6 +99,7 @@ fn tokenize_and_translate(code: &str) -> String {
 
     result
 }
+
 fn flush_token(token: &mut String, output: &mut String) {
     if token.is_empty() {
         return;
@@ -111,7 +112,7 @@ fn flush_token(token: &mut String, output: &mut String) {
         "أنهِ" => "end".to_string(),
         "إذًا" => "then".to_string(),
         "وإذ" => "elseif".to_string(),
-        "إذ" => "if".to_string(),
+        "إذ" | "إذا" => "if".to_string(),
         "آخر" => "else".to_string(),
         "كرر" => "do".to_string(),
         "وطّن" => "local".to_string(),
@@ -121,41 +122,32 @@ fn flush_token(token: &mut String, output: &mut String) {
 
         "و" => "and".to_string(),
         "أو" => "or".to_string(),
-        "لا" => "not".to_string(),
-        "عدم" => "nil".to_string(),
-        "صواب" => "true".to_string(),
-        "خطأ" => "false".to_string(),
+        "لا" | "عدم" => "not".to_string(),
+        "فارغ" => "nil".to_string(),
+
+        "أصاب" => "true".to_string(),
+        "أخطأ" => "false".to_string(),
+
+        "جدول" | "جداول" => "table".to_string(),
 
         "لطالما" => "while".to_string(),
         "لـ" | "ل" => "for".to_string(),
-        "أعد" => "repeat".to_string(),
+        "أعد" => "do".to_string(),
+        "كرر_حتى" => "repeat".to_string(),
         "حتى" => "until".to_string(),
         "اقطع" => "break".to_string(),
         "أرجع" => "return".to_string(),
 
         "أزواج" => "pairs".to_string(),
-        "أزواج_مرقمة" => "ipairs".to_string(),
+        "أزواج_أساس" => "ipairs".to_string(),
         "أرنِ" => "next".to_string(),
         "فكك" => "table.unpack".to_string(),
-        "آتنِ" => "rawget".to_string(),
-        "أفلت" => "rawset".to_string(),
-        "قارن" => "rawequal".to_string(),
-        "جدول_فائقًا" => "setmetatable".to_string(),
-        "جدول_فائق" => "getmetatable".to_string(),
-        "اكنس" => "collectgarbage".to_string(),
-        "نفّذ" => "dofile".to_string(),
-        "أجر" => "load".to_string(),
 
-        "دول.فتح" => "io.open".to_string(),
-        "دول.اقرأ" => "io.read".to_string(),
-        "دول.اكتب" => "io.write".to_string(),
-        "دول.أغلق" => "io.close".to_string(),
-
-        "تنفيذ.فالمشغل" => "os.execute".to_string(),
-        "تاريخ.فالمشغل" => "os.date".to_string(),
-        "الوقت.فالمشغل" => "os.time".to_string(),
-        "خروج.فالمشغل" => "os.exit".to_string(),
-        "امح.فالمشغل" => "os.remove".to_string(),
+        // معالجة الأخطاء والسيطرة
+        "مدفع" => "pcall".to_string(),
+        "مدفع_ضاغط" => "xpcall".to_string(),
+        "خطأْ" => "error".to_string(),
+        "أجزم" => "assert".to_string(),
 
         other => {
             if other.chars().all(|c| c.is_ascii_alphanumeric() || c == '_' || c == '.') {

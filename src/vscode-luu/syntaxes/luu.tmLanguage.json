@@ -1,0 +1,32 @@
+{
+  "scopeName": "source.luu",
+  "fileTypes": ["luu"],
+  "patterns": [
+    {
+      "name": "storage.type.luu",
+      "match": "\\b(وطّن|دُل)\\b"
+    },
+    {
+      "name": "keyword.control.luu",
+      "match": "\\b(إذا|إذًا|وإذ|آخر|أنهِ|لطالما|لـ|ل|أعد|حتى|اقطع|انتقل|في)\\b"
+    },
+    {
+      "name": "keyword.operator.luu",
+      "match": "\\b(و|أو|لا|عدم|فارغ)\\b"
+    },
+    {
+      "name": "constant.language.luu",
+      "match": "\\b(أصاب|أخطأ)\\b"
+    },
+    {
+      "name": "support.function.luu",
+      "match": "\\b(اطبع|مدفع|مدفع_ضاغط|خطأْ|أجزم|أزواج|أزواج_أساس|أرنِ|فكك|آتنِ|أفلت|قارن|جدول_فائقًا|جدول_فائق|اكنس|نفّذ|أجر)\\b"
+    },
+    {
+      "name": "string.quoted.double.luu",
+      "begin": "\"",
+      "end": "\""
+    }
+  ],
+  "repository": {}
+}

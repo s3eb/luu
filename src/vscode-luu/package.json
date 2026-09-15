@@ -1,0 +1,25 @@
+{
+  "name": "luu-language",
+  "displayName": "Luu Language Support",
+  "description": "Syntax highlighting for Luu",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "contributes": {
+    "languages": [{
+      "id": "luu",
+      "aliases": ["Luu", "luu"],
+      "extensions": [".luu"],
+      "configuration": "./language-configuration.json"
+    }],
+    "grammars": [{
+      "language": "luu",
+      "scopeName": "source.luu",
+      "path": "./syntaxes/luu.tmLanguage.json"
+    }]
+  }
+}
