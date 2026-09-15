@@ -57,22 +57,28 @@ fn tokenize_and_translate(code: &str) -> String {
     let mut current_token = String::new();
     let mut in_string = false;
     let mut string_char = ' ';
+    let mut chars = code.chars().peekable();
 
-    for ch in code.chars() {
+    while let Some(ch) = chars.next() {
         if (ch == '"' || ch == '\'') && !in_string {
             flush_token(&mut current_token, &mut result);
             in_string = true;
             string_char = ch;
             result.push(ch);
             continue;
-        } else if in_string && ch == string_char {
-            in_string = false;
-            result.push(ch);
-            continue;
-        }
-
-        if in_string {
-            result.push(ch);
+        } else if in_string {
+            if ch == '\\' {
+                // التعامل مع الهروب (Escaping مثل \") داخل النصوص
+                result.push(ch);
+                if let Some(next_ch) = chars.next() {
+                    result.push(next_ch);
+                }
+            } else if ch == string_char {
+                in_string = false;
+                result.push(ch);
+            } else {
+                result.push(ch);
+            }
             continue;
         }
 
@@ -93,7 +99,6 @@ fn tokenize_and_translate(code: &str) -> String {
 
     result
 }
-
 fn flush_token(token: &mut String, output: &mut String) {
     if token.is_empty() {
         return;
